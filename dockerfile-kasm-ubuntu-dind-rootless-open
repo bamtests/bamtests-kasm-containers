@@ -1,0 +1,44 @@
+FROM kasmweb/ubuntu-jammy-dind-rootless:1.14.0
+USER root
+
+ENV HOME /home/kasm-default-profile
+ENV STARTUPDIR /dockerstartup
+ENV INST_SCRIPTS $STARTUPDIR/install
+WORKDIR $HOME
+
+######### Customize Container Here ###########
+
+# Upgrade && Remove closed-source apps
+RUN sudo apt-get remove google-chrome-stable code sublime-text -y
+RUN rm -rf $HOME/Desktop/google-chrome.desktop
+RUN rm -rf $HOME/Desktop/code.desktop
+RUN rm -rf $HOME/Desktop/sublime_text.desktop
+RUN sudo apt-get update && sudo apt-get upgrade -y
+
+# Install xfce's mousepad text editor
+COPY ./src/ubuntu/install/mousepad/ $INST_SCRIPTS/mousepad/
+COPY ./src/ubuntu/install/mousepad/mousepad.desktop $HOME/Desktop/
+RUN bash $INST_SCRIPTS/mousepad/install_mousepad.sh && rm -rf $INST_SCRIPTS/mousepad/
+
+# Install codium
+COPY ./src/ubuntu/install/codium/ $INST_SCRIPTS/codium/
+RUN bash $INST_SCRIPTS/codium/install_codium.sh && rm -rf $INST_SCRIPTS/codium/
+
+# Install Firefox
+COPY ./src/ubuntu/install/firefox/ $INST_SCRIPTS/firefox/
+COPY ./src/ubuntu/install/firefox/firefox.desktop $HOME/Desktop/
+RUN bash $INST_SCRIPTS/firefox/install_firefox.sh && rm -rf $INST_SCRIPTS/firefox/
+
+# Cleanup
+RUN apt-get autoclean && rm -rf /var/lib/apt/lists/* /var/tmp/*
+
+######### End Customizations ###########
+
+RUN chown 1000:0 $HOME
+RUN $STARTUPDIR/set_user_permission.sh $HOME
+
+ENV HOME /home/kasm-user
+WORKDIR $HOME
+RUN mkdir -p $HOME && chown -R 1000:0 $HOME
+
+USER 1000
