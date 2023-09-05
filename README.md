@@ -1,4 +1,4 @@
-# bamtests customer kasm containers
+# bamtests custom kasm containers
 *This repository contains the container source code for the [bamtests kasm registry](https://bamtests.github.io/kasm-registry/1.0/)*
 
 There are two general goals with this repository:
