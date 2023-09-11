@@ -32,6 +32,9 @@ RUN bash $INST_SCRIPTS/firefox/install_firefox.sh && rm -rf $INST_SCRIPTS/firefo
 COPY ./src/ubuntu/install/obsidian/ $INST_SCRIPTS/obsidian/
 RUN bash $INST_SCRIPTS/obsidian/install_obsidian.sh && rm -rf $INST_SCRIPTS/obsidian/
 
+# Install distrobox
+RUN curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sudo sh
+
 # Cleanup
 RUN apt-get autoclean && rm -rf /var/lib/apt/lists/* /var/tmp/*
 
